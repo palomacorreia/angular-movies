@@ -1,20 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
+import { FilmesService } from 'src/app/core/filmes.service';
+import { AlertaComponent } from 'src/app/shared/components/alerta/alerta.component';
 import { ValidarCamposService } from 'src/app/shared/components/campos/validar-campos.service';
+import { Alerta } from 'src/app/shared/models/alerta';
+import { Filme } from 'src/app/shared/models/filme';
 
 @Component({
-  selector: 'dio-cadastro-filmes',
-  templateUrl: './cadastro-filmes.component.html',
-  styleUrls: ['./cadastro-filmes.component.scss']
+  selector: 'cadastro-filmes',
+  templateUrl: './cadastro-filmes.component.html'
 })
 export class CadastroFilmesComponent implements OnInit {
 
   cadastro: FormGroup;
   generos: Array<string>;
 
-  constructor(protected fb: FormBuilder,
-    public validacao : ValidarCamposService) { }
+  constructor(public validacao: ValidarCamposService,
+              public dialog: MatDialog,
+              private fb: FormBuilder,
+              private filmeService: FilmesService,
+              private router: Router) { }
 
   get ct(){
     return this.cadastro.controls;
@@ -34,17 +42,50 @@ export class CadastroFilmesComponent implements OnInit {
     this.generos = ['Ação', 'Romance', 'Aventura', 'Terror', 'Ficção cientifica', 'Comédia', 'Aventura', 'Drama'];
   }
 
-  salvar(): void {
+  submit(): void {
     this.cadastro.markAllAsTouched();
     if (this.cadastro.invalid) {
       return;
     }
-    alert("SUCESSO")
+    const filme = this.cadastro.getRawValue() as Filme;
+    this.salvar(filme);
 
   }
 
   reiniciar(): void {
     this.cadastro.reset();
+  }
+
+  private salvar(filme: Filme): void {
+    this.filmeService.salvar(filme).subscribe(() => {
+      const config = {
+        data: {
+          btnSucesso: 'Ir para a listagem',
+          btnCancelar: 'Cadastrar um novo filme',
+          corBtnCancelar: 'primary',
+          possuirBtnFechar: true
+        } as Alerta
+      };
+      const dialogRef = this.dialog.open(AlertaComponent, config);
+      dialogRef.afterClosed().subscribe((opcao: boolean) => {
+        if (opcao) {
+          this.router.navigateByUrl('filmes');
+        } else {
+          this.reiniciar();
+        }
+      });
+    },
+    () => {
+      const config = {
+        data: {
+          titulo: 'Erro ao salvar o registro!',
+          descricao: 'Não conseguimos salvar seu registro, favor tentar novamente mais tarde',
+          corBtnSucesso: 'warn',
+          btnSucesso: 'Fechar'
+        } as Alerta
+      };
+      this.dialog.open(AlertaComponent, config);
+    });
   }
 
 }
