@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import { ValidarCamposService } from 'src/app/shared/components/validar-campos.service';
+import { ValidarCamposService } from 'src/app/shared/components/campos/validar-campos.service';
 
 @Component({
   selector: 'dio-cadastro-filmes',
