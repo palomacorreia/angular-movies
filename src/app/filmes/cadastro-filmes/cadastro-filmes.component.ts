@@ -48,6 +48,8 @@ export class CadastroFilmesComponent implements OnInit {
       return;
     }
     const filme = this.cadastro.getRawValue() as Filme;
+    console.log(filme);
+    
     this.salvar(filme);
 
   }

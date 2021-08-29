@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { FilmesService } from 'src/app/core/filmes.service';
 import { ConfigPrams } from 'src/app/shared/models/config-params';
 import { Filme } from 'src/app/shared/models/filme';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'listagem-filmes',
@@ -10,6 +11,8 @@ import { Filme } from 'src/app/shared/models/filme';
   styleUrls: ['./listagem-filmes.component.scss']
 })
 export class ListagemFilmesComponent implements OnInit {
+
+  readonly noPhoto = 'https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=6&m=922962354&s=612x612&w=0&h=_KKNzEwxMkutv-DtQ4f54yA5nc39Ojb_KPvoV__aHyU=';
 
   config: ConfigPrams = {
     pagina: 0,
@@ -27,7 +30,9 @@ export class ListagemFilmesComponent implements OnInit {
       genero: ['']
     });
 
-    this.filtro.get('texto').valueChanges.subscribe((val: string) => {
+    this.filtro.get('texto').valueChanges
+    .pipe(debounceTime(400))
+    .subscribe((val: string) => {
       this.config.pesquisa = val;
       this.resetarConsulta();
     });
