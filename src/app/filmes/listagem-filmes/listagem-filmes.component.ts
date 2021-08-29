@@ -4,6 +4,7 @@ import { FilmesService } from 'src/app/core/filmes.service';
 import { ConfigPrams } from 'src/app/shared/models/config-params';
 import { Filme } from 'src/app/shared/models/filme';
 import { debounceTime } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'listagem-filmes',
@@ -22,7 +23,7 @@ export class ListagemFilmesComponent implements OnInit {
   filtro: FormGroup;
   generos: Array<string>;
 
-  constructor(private filmeService: FilmesService,  private fb: FormBuilder) { }
+  constructor(private filmeService: FilmesService,  private fb: FormBuilder, private router: Router) { }
 
   ngOnInit() {
     this.filtro = this.fb.group({
@@ -48,6 +49,10 @@ export class ListagemFilmesComponent implements OnInit {
 
   onScroll() {
     this.listarFilmes();
+  }
+
+  open(id: number) {
+    this.router.navigateByUrl('/filmes/' + id)
   }
 
   private listarFilmes(): void {
