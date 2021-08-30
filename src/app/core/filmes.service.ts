@@ -18,6 +18,10 @@ export class FilmesService {
   salvar(filme: Filme): Observable<Filme> {
     return this.http.post<Filme>(url, filme);
   }
+  
+  editar(filme: Filme): Observable<Filme> {
+    return this.http.put<Filme>(url + filme.id, filme);
+  }
 
   listar(config: ConfigPrams): Observable<Filme[]> {
     const configPrams = this.configService.configurarParametros(config);
